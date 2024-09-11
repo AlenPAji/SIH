@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Riverdale Water Authority - Admin Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .dashboard {
+            display: flex;
+            min-height: 100vh;
+        }
+        .sidebar {
+            width: 200px;
+            background-color: #0077be;
+            color: white;
+            padding: 20px;
+        }
+        .sidebar h2 {
+            margin-top: 0;
+        }
+        .sidebar ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .sidebar ul li {
+            margin-bottom: 10px;
+        }
+        .sidebar ul li a {
+            color: white;
+            text-decoration: none;
+        }
+        .main-content {
+            flex-grow: 1;
+            padding: 20px;
+        }
+        .widget {
+            background-color: white;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .widget h3 {
+            margin-top: 0;
+            color: #0077be;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        button {
+            background-color: #0077be;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #005a8c;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="sidebar">
+            <h2>Admin Dashboard</h2>
+            <ul>
+                <li><a href="#new-connections">New Connections</a></li>
+                <li><a href="#inventory">Inventory</a></li>
+                <li><a href="#alerts">Alerts</a></li>
+            </ul>
+        </div>
+        <div class="main-content">
+            <div class="widget" id="new-connections">
+                <h3>New Connection Notifications</h3>
+                <table>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Address</th>
+                        <th>Verify</th>
+                    </tr>
+                    {{#each connections}}
+                    <tr>
+                        <td>{{_id}}</td>
+                        <td>{{fullname}}</td>
+                        <td>{{Housename}}, {{sAddr}}, {{city}}</td>
+                        <td><button onclick="verifyConnection('{{_id}}')">Verify</button></td>
+                    </tr>
+                    {{/each}}
+                </table>
+            </div>
+
+            <div class="widget" id="inventory">
+                <h3>Inventory Management</h3>
+                <table>
+                    <tr>
+                        <th>Item</th>
+                        <th>Quantity</th>
+                        <th>Action</th>
+                    </tr>
+                    <tr>
+                        <td>Water Meters</td>
+                        <td>50</td>
+                        <td><button onclick="updateInventory('Water Meters')">Update</button></td>
+                    </tr>
+                    <tr>
+                        <td>Pipes (ft)</td>
+                        <td>1000</td>
+                        <td><button onclick="updateInventory('Pipes')">Update</button></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="widget" id="alerts">
+                <h3>Send Alerts</h3>
+                <form id="alert-form">
+                    <label for="alert-type">Alert Type:</label><br>
+                    <select id="alert-type" name="alert-type">
+                        <option value="maintenance">Scheduled Maintenance</option>
+                        <option value="emergency">Emergency Notice</option>
+                        <option value="conservation">Conservation Request</option>
+                    </select><br><br>
+                    
+                    <label for="alert-message">Message:</label><br>
+                    <textarea id="alert-message" name="alert-message" rows="4" cols="50"></textarea><br><br>
+                    
+                    <button type="submit">Send Alert</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('alert-form').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const alertType = document.getElementById('alert-type').value;
+            const alertMessage = document.getElementById('alert-message').value;
+
+            // Prepare data to send
+            const postData = {
+                alertType: alertType,
+                message: alertMessage
+            };
+
+            try {
+                const response = await fetch('/receive-alert', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(postData)
+                });
+
+                // Handle response
+                if (response.ok) {
+                    const result = await response.json();
+                    alert('Alert sent successfully: ' + result.message);
+                } else {
+                    alert('Failed to send alert');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while sending the alert.');
+            }
+        });
+
+        function verifyConnection(connectionId) {
+            // Make a request to the server to verify the connection
+            console.log("Verifying connection with ID:", connectionId);
+            // Add your fetch request logic here to send the verification request to the server.
+        }
+    </script>
+</body>
+</html>

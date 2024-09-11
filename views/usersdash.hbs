@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Riverdale Water Authority - User Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        h1, h2 {
+            color: #0077be;
+        }
+        .dashboard-section {
+            background-color: #fff;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .btn {
+            display: inline-block;
+            background-color: #0077be;
+            color: #fff;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .btn:hover {
+            background-color: #005a8c;
+        }
+        .alert {
+            background-color: #f8f8f8;
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+        .alert.unread {
+            border-left: 5px solid #0077be;
+        }
+        .alert-actions {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>User Dashboard</h1>
+        
+        <div class="dashboard-section">
+            <h2>Bills</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Bill Number</th>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="billsList">
+                    <!-- Bills will be dynamically added here -->
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="dashboard-section">
+            <h2>Alerts</h2>
+            <div id="alertsList">
+                <!-- Alerts will be dynamically added here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample data - in a real application, this would come from a server
+        const bills = [
+            { id: 1, number: 'BILL-001', date: '2024-05-01', amount: 50.00, status: 'Unpaid' },
+            { id: 2, number: 'BILL-002', date: '2024-04-01', amount: 45.50, status: 'Paid' },
+            { id: 3, number: 'BILL-003', date: '2024-03-01', amount: 52.25, status: 'Unpaid' },
+        ];
+
+        const alerts = [
+            { id: 1, message: 'Scheduled maintenance in your area on June 15th.', read: false },
+            { id: 2, message: 'Please conserve water due to drought conditions.', read: false },
+            { id: 3, message: 'New online payment system now available!', read: true },
+        ];
+
+        // Populate bills table
+        function populateBills() {
+            const billsList = document.getElementById('billsList');
+            billsList.innerHTML = bills.map(bill => `
+                <tr>
+                    <td>${bill.number}</td>
+                    <td>${bill.date}</td>
+                    <td>$${bill.amount.toFixed(2)}</td>
+                    <td>${bill.status}</td>
+                    <td>${bill.status === 'Unpaid' ? `<button class="btn" onclick="payBill(${bill.id})">Pay Now</button>` : '-'}</td>
+                </tr>
+            `).join('');
+        }
+
+        // Populate alerts
+        function populateAlerts() {
+            const alertsList = document.getElementById('alertsList');
+            alertsList.innerHTML = alerts.map(alert => `
+                <div class="alert ${alert.read ? '' : 'unread'}">
+                    <p>${alert.message}</p>
+                    <div class="alert-actions">
+                        ${alert.read ? '' : `<button class="btn" onclick="markAsRead(${alert.id})">Mark as Read</button>`}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Pay bill function
+        function payBill(billId) {
+            // In a real application, this would send a request to the server
+            alert(`Processing payment for bill ${billId}`);
+            // Update the bill status
+            const bill = bills.find(b => b.id === billId);
+            if (bill) {
+                bill.status = 'Paid';
+                populateBills();
+            }
+        }
+
+        // Mark alert as read function
+        function markAsRead(alertId) {
+            // In a real application, this would send a request to the server
+            const alert = alerts.find(a => a.id === alertId);
+            if (alert) {
+                alert.read = true;
+                populateAlerts();
+            }
+        }
+
+        // Initialize the dashboard
+        populateBills();
+        populateAlerts();
+    </script>
+</body>
+</html>
